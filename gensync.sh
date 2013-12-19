@@ -4,7 +4,7 @@
 # fidonet/binkd setup in order to take over the position as R14C.  Let's not
 # let that happen again.  We're gonna rsync to phoenix's encrypted archival.
 
-VERBOSE=1		# this will produce cron output (mail) every day in
+VERBOSE=2		# this will produce cron output (mail) every day in
 			# quantity if set to 1
 if [[ $VERBOSE = 2 ]] ; then
 	MARK=1
@@ -22,45 +22,48 @@ if [[ $VERBOSE -ge 1 ]] ; then
 fi
 
 # put it together-- whee, new knowledge in scripting for me!
-N=0
-eval "RSYNCV${N}=\"$RSYNC $RSYNC_VERBOSE_OPTS --chmod=Du+rwx,go-rwx,Fu+rw \""
+#N=0
+#eval "RSYNCV${N}=\"$RSYNC $RSYNC_VERBOSE_OPTS --chmod=Du+rwx,go-rwx,Fu+rw \""
+RSYNC_FULL="$RSYNC $RSYNC_VERBOSE_OPTS --chmod=Du+rwx,go-rwx,Fu+rw "
 if [[ $VERBOSE = 2 ]] ; then
 	echo Mark $MARK
 fi
 
-N=`expr $N + 1`
-if [[ $VERBOSE = 2 ]] ; then
-	MARK=`expr $MARK + 1`
-	echo Mark $MARK
-fi
-
-eval "RSYNCV${N}=\"-e 'ssh -y -p 22 -i \"/sbbs/home/.ssh/id_rsa\"' \""
+#N=`expr $N + 1`
 if [[ $VERBOSE = 2 ]] ; then
 	MARK=`expr $MARK + 1`
 	echo Mark $MARK
 fi
 
-N=`expr $N + 1`
-eval "RSYNCV${N}=\"/sbbs khelair@192.168.2.100:/mishmash/archive/sbbs \""
+#eval "RSYNCV${N}=\"-e \'ssh -y -p 22 -i \\\"/sbbs/home/.ssh/id_rsa\\\" \' \" "
+RSYNC_FULL="${RSYNC_FULL}-e 'ssh -y -p 22 -i \"/sbbs/home/.ssh/id_rsa\" ' "
+if [[ $VERBOSE = 2 ]] ; then
+	MARK=`expr $MARK + 1`
+	echo Mark $MARK
+fi
+
+#N=`expr $N + 1`
+#eval "RSYNCV${N}=\"/sbbs khelair@192.168.2.100:/mishmash/archive/sbbs \""
+RSYNC_FULL="${RSYNC_FULL}/sbbs khelair@192.168.2.100:/mishmash/archive/sbbs"
 if [[ $VERBOSE = 2 ]] ; then
 	MARK=`expr $MARK + 1`
 	echo Mark $MARK
 fi
 
 #fucking nasty kludge
-SED_PATH='/usr/bin/sed'
+#SED_PATH='/usr/bin/sed'
 
-RSYNC_FULL=$SED_PATH -e 's/=/\0/g' \""$RSYNC_FULL\""
+#RSYNC_FULL="$SED_PATH -e 's/=/ /g' $RSYNC_FULL"
 
 #bugs in the following commented out scripting
-for i in 0 1 2
-do
-	if [[ $VERBOSE = 2 ]]; then
-		MARK=`expr $MARK + 1`
-		echo Mark $MARK
-	fi
-	eval RSYNC_FULL="\"$RSYNC_FULL=\$RSYNCV${i}\""
-done
+#for i in 0 1 2
+#do
+#	if [[ $VERBOSE = 2 ]]; then
+#		MARK=`expr $MARK + 1`
+#		echo Mark $MARK
+#	fi
+#	eval RSYNC_FULL="\"$RSYNC_FULL=\$RSYNCV${i}\""
+#done
 
 #RSYNCV="/usr/local/bin/rsync -vHrltD --chmod=Du+rwx,go-rwx,Fu+rw,go-rw -e "
 #RSYNCV+="\"ssh -y -p 22 -i '/sbbs/home/.ssh/id_rsa'\" /sbbs/home "
