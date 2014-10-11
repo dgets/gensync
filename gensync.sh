@@ -5,16 +5,27 @@
 # let that happen again.  We're gonna rsync to phoenix's encrypted archival.
 
 VERBOSE=2		# this will produce cron output (mail) every day in
-			# quantity if set to 1
+			# quantity if set to 1 or higher
 if [[ $VERBOSE = 2 ]] ; then
 	MARK=1
 fi
 
 DEBUGGING=1		# suppresses rsync execution and echoes full command(s)
 
-RSYNC='/usr/local/bin/rsync'
+# installation dependent options
+WHICH='/usr/bin/which'	# this one may need to be set manually
+
+#
+RSYNC=`$WHICH rsync`
 RSYNC_VERBOSE_OPTS='-vHrltD'
 RSYNC_QUIET_OPTS='-qHrltD'
+RSYNC_CHMOD_OPTS='Du+rwx,go-rwx,Fu+rw'
+
+# user/account/situational options
+# you will need to go through these *ahem*
+RMTHST='chehalem'
+RMTACCT='damo'
+RMTHSTDIR="/home/$RMTACCT/sbbs/"
 
 if [[ $VERBOSE -ge 1 ]] ; then
         echo -n RSYNC set to:
@@ -24,7 +35,7 @@ fi
 # put it together-- whee, new knowledge in scripting for me!
 #N=0
 #eval "RSYNCV${N}=\"$RSYNC $RSYNC_VERBOSE_OPTS --chmod=Du+rwx,go-rwx,Fu+rw \""
-RSYNC_FULL="$RSYNC $RSYNC_VERBOSE_OPTS --chmod=Du+rwx,go-rwx,Fu+rw "
+RSYNC_FULL="$RSYNC $RSYNC_VERBOSE_OPTS --chmod=$RSYNC_CHMOD_OPTS "
 if [[ $VERBOSE = 2 ]] ; then
 	echo Mark $MARK
 fi
@@ -44,7 +55,7 @@ fi
 
 #N=`expr $N + 1`
 #eval "RSYNCV${N}=\"/sbbs khelair@192.168.2.100:/mishmash/archive/sbbs \""
-RSYNC_FULL="${RSYNC_FULL}/sbbs khelair@192.168.2.100:/mishmash/archive/sbbs"
+RSYNC_FULL="${RSYNC_FULL}/sbbs ${RMTACCT}@${RMTHST}:${RMTHSTDIR}"
 if [[ $VERBOSE = 2 ]] ; then
 	MARK=`expr $MARK + 1`
 	echo Mark $MARK
