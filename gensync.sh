@@ -10,7 +10,7 @@ if [[ $VERBOSE = 2 ]] ; then
 	MARK=1
 fi
 
-DEBUGGING=1		# suppresses rsync execution and echoes full command(s)
+DEBUGGING=0		# suppresses rsync execution and echoes full command(s)
 
 # installation dependent options
 WHICH='/usr/bin/which'	# this one may need to be set manually
@@ -23,7 +23,7 @@ RSYNC_CHMOD_OPTS='Du+rwx,go-rwx,Fu+rw'
 
 # user/account/situational options
 # you will need to go through these *ahem*
-RMTHST='chehalem'
+RMTHST='wolf359'
 RMTACCT='damo'
 RMTHSTDIR="/home/$RMTACCT/sbbs/"
 
@@ -47,7 +47,7 @@ if [[ $VERBOSE = 2 ]] ; then
 fi
 
 #eval "RSYNCV${N}=\"-e \'ssh -y -p 22 -i \\\"/sbbs/home/.ssh/id_rsa\\\" \' \" "
-RSYNC_FULL="${RSYNC_FULL}-e 'ssh -y -p 22 -i \"/sbbs/home/.ssh/id_rsa\" ' "
+RSYNC_FULL="${RSYNC_FULL}-e 'ssh -y -p 22 -i \"/sbbs/.ssh/id_rsa\"' "
 if [[ $VERBOSE = 2 ]] ; then
 	MARK=`expr $MARK + 1`
 	echo Mark $MARK
