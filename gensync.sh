@@ -1,8 +1,11 @@
 #!/bin/sh
-# So I lost the entirety of my 'sbbs.ini' file thanks to not having a proper
-# backup today, while trying to configure everything to work properly for my 
-# fidonet/binkd setup in order to take over the position as R14C.  Let's not
-# let that happen again.  We're gonna rsync to phoenix's encrypted archival.
+# As has been proven by multiple mishaps, it is imperative to have an rsync,
+# as well as a periodic tarball archive, process going in multiple areas on
+# my primary servers and development machines; this is going to be used to
+# provide a more generic handling of this, after I get issues working at
+# this current, simple level
+
+# BUGS & CHANGES will be tracked in github
 
 VERBOSE=2		# this will produce cron output (mail) every day in
 			# quantity if set to 1 or higher
@@ -15,7 +18,7 @@ DEBUGGING=0		# suppresses rsync execution and echoes full command(s)
 # installation dependent options
 WHICH='/usr/bin/which'	# this one may need to be set manually
 
-#
+# RSYNC options
 RSYNC=`$WHICH rsync`
 RSYNC_VERBOSE_OPTS='-vHrltD'
 RSYNC_QUIET_OPTS='-qHrltD'
@@ -23,9 +26,9 @@ RSYNC_CHMOD_OPTS='Du+rwx,go-rwx,Fu+rw'
 
 # user/account/situational options
 # you will need to go through these *ahem*
-RMTHST='wolf359'
-RMTACCT='damo'
-RMTHSTDIR="/home/$RMTACCT/sbbs/"
+RMTHST='redacted'
+RMTACCT='redacted'
+RMTHSTDIR="redacted"
 
 if [[ $VERBOSE -ge 1 ]] ; then
         echo -n RSYNC set to:
@@ -46,6 +49,10 @@ if [[ $VERBOSE = 2 ]] ; then
 	echo Mark $MARK
 fi
 
+# a couple of things I don't want to display here, but I don't think that
+# this little bit of information leakage will destroy anything or allow
+# straight up pwnage, as it's freely available information on the intertubes
+# that I have a Synchronet BBS running
 #eval "RSYNCV${N}=\"-e \'ssh -y -p 22 -i \\\"/sbbs/home/.ssh/id_rsa\\\" \' \" "
 RSYNC_FULL="${RSYNC_FULL}-e 'ssh -y -p 22 -i \"/sbbs/.ssh/id_rsa\"' "
 if [[ $VERBOSE = 2 ]] ; then
@@ -54,7 +61,7 @@ if [[ $VERBOSE = 2 ]] ; then
 fi
 
 #N=`expr $N + 1`
-#eval "RSYNCV${N}=\"/sbbs khelair@192.168.2.100:/mishmash/archive/sbbs \""
+#eval "RSYNCV${N}=\"/sbbs redacted@192.168.2.100:/mishmash/archive/sbbs \""
 RSYNC_FULL="${RSYNC_FULL}/sbbs ${RMTACCT}@${RMTHST}:${RMTHSTDIR}"
 if [[ $VERBOSE = 2 ]] ; then
 	MARK=`expr $MARK + 1`
@@ -78,14 +85,14 @@ fi
 
 #RSYNCV="/usr/local/bin/rsync -vHrltD --chmod=Du+rwx,go-rwx,Fu+rw,go-rw -e "
 #RSYNCV+="\"ssh -y -p 22 -i '/sbbs/home/.ssh/id_rsa'\" /sbbs/home "
-#RSYNCV+="khelair@192.168.2.100:/mishmash/archive/sbbs"
+#RSYNCV+="redacted@192.168.2.100:/redacted"
 #RSYNCQ="/usr/local/bin/rsync -qHrltD --chmod=Du+rwx,go-rwx,Fu+rw,go-rw -e "
 #RSYNCQ+="\"ssh -y -p 22 -i '/sbbs/home/.ssh/id_rsa'\" /sbbs/home "
-#RSYNCQ+="khelair@192.168.2.100:/mishmash/archive/sbbs"
+#RSYNCQ+="redacted@192.168.2.100:/redacted"
 
 # not implemented yet (in order to use this script wherever)
 #BKUP_ORIGIN=/sbbs/home
-#BKUP_TARGET=/mishmash/archive/sbbs
+#BKUP_TARGET=/redacted
 
 if [[ $VERBOSE -ge 1 ]] ; then
 	echo -n Starting backup of /sbbs directory.  No more data losses, 
@@ -106,7 +113,7 @@ if [[ $VERBOSE -ge 1 ]] ; then
 
 	#/usr/local/bin/rsync -vHrltD --chmod=Du+rwx,go-rwx,Fu+rw,go-rw -e \
 	#	"ssh -y -p 22 -i '/sbbs/home/.ssh/id_rsa'" /sbbs/home \
-	#	khelair@192.168.2.100:/mishmash/archive/sbbs || { \
+	#	redacted@192.168.2.100:/mishmash/archive/sbbs || { \
 	#		echo WARNING: rsync process exited abnormally; \
 	#		echo This probably means a failure in backup of sbbs; \
 	#	}
@@ -119,7 +126,7 @@ if [[ $VERBOSE -ge 1 ]] ; then
 #	}
 fi
 
-# NOTE: On second thought, phoenix's encrypted archival is on the SAME DAMN
+# NOTE: On second thought, redacted's encrypted archival is on the SAME DAMN
 # DRIVE as the encrypted partition that this VM resides on, so we're going to
 # have to put that somewhere else, too.  ASAP, no more fucking failures!
 
